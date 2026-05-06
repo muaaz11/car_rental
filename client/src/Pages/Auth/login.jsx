@@ -487,13 +487,13 @@ function RegisterForm({
   const [role, setRole] = useState("");
 
   const handleSubmit = () => {
-    const errs = validateRegister({ name, email, password, role, role });
+    const errs = validateRegister({ name, email, password, role });
     if (Object.keys(errs).length) {
       setErrors(errs);
       return;
     }
     setErrors({});
-    onSubmit({ name, email, password, role, role });
+    onSubmit({ name, email, password, role });
   };
 
   return (
@@ -613,7 +613,6 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Login failed.");
-      // localStorage.setItem("token", data.token);
       setUser(data.user);
       console.log(data.user);
 
