@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  customer
+  owner
+}
+
+enum CarStatus {
+  active
+  rented
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  completed
+  cancelled
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password String
+  role Role @default(customer)
+  cars Car[]
+  bookings Booking[]
+  createdAt DateTime @default(now())
+  refreshToken RefreshToken[]
+  @@map("users")
+}
+
+model RefreshToken {
+  id Int @id @default(autoincrement())
+  token String @unique
+  userId Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("refresh_tokens")
+}
+
+model Car { 
+  id Int @id @default(autoincrement())
+  ownerId Int
+  make String
+  model String
+  year Int
+  dailyRate Decimal @db.Decimal(10, 2)
+  status CarStatus @default(active)
+  createdAt DateTime @default(now())
+
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade )
+  image CarImage[]
+  bookings Booking[]
+
+  @@map("cars")
+}
+
+model CarImage {
+  id Int @id @default(autoincrement())
+  cardId Int
+  imageUrl String
+
+  car Car @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  @@map("Car_images")
+}
+
+model Booking {
+  id Int @id @default(autoincrement())
+  carId Int
+  customerId Int
+  startDate DateTime @db.Date
+  endDate DateTime @db.Date
+  totalAmount Decimal @db.Decimal(10,2)
+  status BookingStatus @default(pending)
+  createdAt DateTime @default(now())
+
+  car Car @relation(fields: [carId], references: [id])
+  customer User @relation(fields: [customerId], references: [id])
+}
