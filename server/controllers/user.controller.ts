@@ -41,9 +41,7 @@ const login = async (req, res) => {
 
     if (!findUser) return res.status(401).json({ message: "email not exists" });
 
-    const user = findUser;
-
-    const valid = bcrypt.compare(password, findUser.password);
+    const valid = await bcrypt.compare(password, findUser.password);
     if (!valid) return res.status(401).json({ message: "Invalid password" });
 
     const refreshToken = generateRefreshToken(findUser?.id);
@@ -74,8 +72,8 @@ const login = async (req, res) => {
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
-
     return res.status(200).json({ user: findUser });
+
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
