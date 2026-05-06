@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BreadCrumbs from "../../components/BreadCrumbs/BreadCrumbs";
-import FAQItem from "./FAQitem";
+import FAQItem from "./FAQItem";
 
 const faqs = [
   {
